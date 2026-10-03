@@ -12,7 +12,6 @@ services:
     buildCommand: sha256sum --check source.sha256 && tar -xzf ai-empire-source.tar.gz && npm ci && npm test && npx tsc --noEmit
     startCommand: npm run trading:daemon
     healthCheckPath: /healthz
-    maxShutdownDelaySeconds: 120
     disk:
       name: ai-empire-ledger
       mountPath: /var/data
