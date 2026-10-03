@@ -1,0 +1,28 @@
+# Review before applying: this uses a PAID service and a PAID persistent disk.
+# This is a deployment template; it has not provisioned a Render service.
+# Paper needs no Binance credentials or fixed egress IP.
+services:
+  - type: web
+    name: ai-empire-trading-proof
+    runtime: node
+    region: frankfurt
+    plan: 0.5c-512mb
+    numInstances: 1
+    autoDeployTrigger: off
+    buildCommand: sha256sum --check source.sha256 && tar -xzf ai-empire-source.tar.gz && npm ci && npm test && npx tsc --noEmit
+    startCommand: npm run trading:daemon
+    healthCheckPath: /healthz
+    maxShutdownDelaySeconds: 120
+    disk:
+      name: ai-empire-ledger
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: TRADING_BIND_HOST
+        value: "0.0.0.0"
+      - key: TRADING_DATA_DIRECTORY
+        value: /var/data/ai-empire
+      - key: TRADING_SERVER_TOKEN
+        generateValue: true
